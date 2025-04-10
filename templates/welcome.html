@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<div class="row align-items-center">
+    <div class="col-lg-6 mb-4 mb-lg-0">
+        <h1 class="display-4 fw-bold mb-4">Take control of your finances</h1>
+        <p class="lead mb-4">ExpenseTracker helps you track your expenses, understand your spending habits, and make smarter financial decisions.</p>
+        <div class="d-grid gap-2 d-md-flex">
+            <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-4">
+                <i class="fas fa-user-plus me-2"></i>Create Account
+            </a>
+            <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-lg px-4">
+                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card bg-light border-0">
+            <div class="card-body p-4">
+                <h3 class="h4 mb-3">Key Features</h3>
+                <div class="d-flex align-items-start mb-3">
+                    <div class="feature-icon bg-primary rounded-circle p-2 text-white me-3">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <div>
+                        <h4 class="h5">Visualize Your Spending</h4>
+                        <p class="text-muted">Interactive charts and graphs to help you understand your spending patterns.</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start mb-3">
+                    <div class="feature-icon bg-primary rounded-circle p-2 text-white me-3">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div>
+                        <h4 class="h5">Categorize Expenses</h4>
+                        <p class="text-muted">Organize expenses by categories to track where your money goes.</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start">
+                    <div class="feature-icon bg-primary rounded-circle p-2 text-white me-3">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div>
+                        <h4 class="h5">Financial Insights</h4>
+                        <p class="text-muted">Get personalized insights to improve your financial health.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <hr>
+        <h2 class="text-center mb-4">How It Works</h2>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center p-3 mb-3" style="width: 80px; height: 80px;">
+                    <i class="fas fa-user-plus fa-2x text-primary"></i>
+                </div>
+                <h3 class="h5">1. Create an Account</h3>
+                <p class="text-muted">Sign up for a free account to start tracking your expenses.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center p-3 mb-3" style="width: 80px; height: 80px;">
+                    <i class="fas fa-plus-circle fa-2x text-primary"></i>
+                </div>
+                <h3 class="h5">2. Record Your Expenses</h3>
+                <p class="text-muted">Add your expenses with details like amount, category, and date.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4">
+                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center p-3 mb-3" style="width: 80px; height: 80px;">
+                    <i class="fas fa-chart-line fa-2x text-primary"></i>
+                </div>
+                <h3 class="h5">3. Analyze & Improve</h3>
+                <p class="text-muted">Gain insights from your spending patterns and make better financial decisions.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+.feature-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
+{% endblock %}
