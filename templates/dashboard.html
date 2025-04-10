@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_head %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="mb-3">Financial Dashboard</h1>
+    </div>
+    <div class="col-md-4 text-md-end">
+        <div class="form-group">
+            <select id="chartPeriod" class="form-select" onchange="updateChartPeriod()">
+                <option value="month">This Month</option>
+                <option value="week">This Week</option>
+                <option value="year">This Year</option>
+                <option value="all">All Time</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <!-- Total Expenses -->
+    <div class="col-md-4 mb-3">
+        <div class="card stats-card h-100">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">
+                    <i class="fas fa-dollar-sign me-2"></i>Total Expenses
+                </h6>
+                <div class="number" id="totalExpense">$0.00</div>
+                <div class="label">spending for the period</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Average Daily Expense -->
+    <div class="col-md-4 mb-3">
+        <div class="card stats-card secondary h-100">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">
+                    <i class="fas fa-calculator me-2"></i>Average Daily
+                </h6>
+                <div class="number" id="avgExpense">$0.00</div>
+                <div class="label">average spending per day</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Number of Expenses -->
+    <div class="col-md-4 mb-3">
+        <div class="card stats-card accent h-100">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">
+                    <i class="fas fa-receipt me-2"></i>Transaction Count
+                </h6>
+                <div class="number" id="expenseCount">0</div>
+                <div class="label">expenses recorded</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Expense Charts -->
+    <div class="col-lg-8">
+        <!-- Category Breakdown Chart -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-pie me-2"></i>Spending by Category
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Monthly Trend Chart -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-line me-2"></i>Monthly Spending Trend
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Financial Insights and Quick Actions -->
+    <div class="col-lg-4">
+        <!-- Financial Insights -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-lightbulb me-2"></i>Financial Insights
+            </div>
+            <div class="card-body">
+                <div id="financialInsights" class="insights-container">
+                    <p class="text-center text-muted">
+                        <i class="fas fa-spinner fa-spin me-2"></i>Loading insights...
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-bolt me-2"></i>Quick Actions
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('add_expense') }}" class="btn btn-primary">
+                        <i class="fas fa-plus-circle me-2"></i>Add New Expense
+                    </a>
+                    <a href="{{ url_for('expenses') }}" class="btn btn-secondary">
+                        <i class="fas fa-list me-2"></i>View All Expenses
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Categories -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-tags me-2"></i>Categories
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    {% for category in categories %}
+                    <a href="{{ url_for('expenses', category=category) }}" class="category-badge me-2 mb-2">
+                        {{ category }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
