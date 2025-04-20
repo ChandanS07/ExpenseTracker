@@ -116,10 +116,10 @@
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <a href="{{ url_for('add_expense') }}" class="btn btn-primary">
+                    <a href="{{ url_for('main.add_expense') }}" class="btn btn-primary">
                         <i class="fas fa-plus-circle me-2"></i>Add New Expense
                     </a>
-                    <a href="{{ url_for('expenses') }}" class="btn btn-secondary">
+                    <a href="{{ url_for('main.expenses') }}" class="btn btn-secondary">
                         <i class="fas fa-list me-2"></i>View All Expenses
                     </a>
                 </div>
@@ -134,7 +134,7 @@
             <div class="card-body">
                 <div class="d-flex flex-wrap">
                     {% for category in categories %}
-                    <a href="{{ url_for('expenses', category=category) }}" class="category-badge me-2 mb-2">
+                    <a href="{{ url_for('main.expenses', category=category) }}" class="category-badge me-2 mb-2">
                         {{ category }}
                     </a>
                     {% endfor %}
