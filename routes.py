@@ -1,12 +1,14 @@
 import uuid
 from datetime import datetime, timedelta
-from flask import render_template, redirect, url_for, request, flash, jsonify
+from flask import render_template, redirect, url_for, request, flash, jsonify, Blueprint
 from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
 
-from app import app, db
+from extensions import db
 from models import User, Expense
 from forms import LoginForm, RegistrationForm, ExpenseForm
+
+# Create a blueprint for all routes
+bp = Blueprint('main', __name__)
 
 # Add some categories
 categories = [
@@ -22,11 +24,11 @@ categories = [
     "Miscellaneous"
 ]
 
-@app.route('/register', methods=['GET', 'POST'])
+@bp.route('/register', methods=['GET', 'POST'])
 def register():
     """Register a new user."""
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('main.dashboard'))
     
     form = RegistrationForm()
     
@@ -37,15 +39,15 @@ def register():
         db.session.commit()
         
         flash('Your account has been created! You can now log in.', 'success')
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
     
     return render_template('register.html', form=form)
 
-@app.route('/login', methods=['GET', 'POST'])
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     """Log in a user."""
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('main.dashboard'))
     
     form = LoginForm()
     
@@ -56,33 +58,33 @@ def login():
             login_user(user)
             next_page = request.args.get('next')
             flash(f'Welcome back, {user.username}!', 'success')
-            return redirect(next_page or url_for('dashboard'))
+            return redirect(next_page or url_for('main.dashboard'))
         else:
             flash('Login unsuccessful. Please check your email and password.', 'danger')
     
     return render_template('login.html', form=form)
 
-@app.route('/logout')
+@bp.route('/logout')
 def logout():
     """Log out a user."""
     logout_user()
     flash('You have been logged out.', 'info')
-    return redirect(url_for('welcome'))
+    return redirect(url_for('main.welcome'))
 
-@app.route('/')
+@bp.route('/')
 def welcome():
     """Show welcome page for non-authenticated users or dashboard for authenticated users."""
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('main.dashboard'))
     return render_template('welcome.html')
 
-@app.route('/dashboard')
+@bp.route('/dashboard')
 @login_required
 def dashboard():
     """Render the dashboard with expense summary and charts."""
     return render_template('dashboard.html', categories=categories)
 
-@app.route('/expenses')
+@bp.route('/expenses')
 @login_required
 def expenses():
     """Show all expenses with filtering and sorting."""
@@ -131,7 +133,7 @@ def expenses():
         sort_order=sort_order
     )
 
-@app.route('/expense/add', methods=['GET', 'POST'])
+@bp.route('/expense/add', methods=['GET', 'POST'])
 @login_required
 def add_expense():
     """Add a new expense."""
@@ -151,11 +153,11 @@ def add_expense():
         db.session.commit()
         
         flash('Expense added successfully!', 'success')
-        return redirect(url_for('expenses'))
+        return redirect(url_for('main.expenses'))
     
     return render_template('add_expense.html', form=form, categories=categories)
 
-@app.route('/expense/edit/<expense_id>', methods=['GET', 'POST'])
+@bp.route('/expense/edit/<expense_id>', methods=['GET', 'POST'])
 @login_required
 def edit_expense(expense_id):
     """Edit an existing expense."""
@@ -173,7 +175,7 @@ def edit_expense(expense_id):
         db.session.commit()
         
         flash('Expense updated successfully!', 'success')
-        return redirect(url_for('expenses'))
+        return redirect(url_for('main.expenses'))
     elif request.method == 'GET':
         form.amount.data = expense.amount
         form.date.data = expense.date
@@ -182,7 +184,7 @@ def edit_expense(expense_id):
     
     return render_template('edit_expense.html', form=form, expense=expense, categories=categories)
 
-@app.route('/expense/delete/<expense_id>', methods=['POST'])
+@bp.route('/expense/delete/<expense_id>', methods=['POST'])
 @login_required
 def delete_expense(expense_id):
     """Delete an expense."""
@@ -192,9 +194,9 @@ def delete_expense(expense_id):
     db.session.commit()
     
     flash('Expense deleted successfully!', 'success')
-    return redirect(url_for('expenses'))
+    return redirect(url_for('main.expenses'))
 
-@app.route('/api/expense-stats')
+@bp.route('/api/expense-stats')
 @login_required
 def expense_stats():
     """API to get expense statistics for charts."""
@@ -232,7 +234,7 @@ def expense_stats():
         'count': len(expenses)
     })
 
-@app.route('/api/category-breakdown')
+@bp.route('/api/category-breakdown')
 @login_required
 def category_breakdown():
     """API to get category breakdown for charts."""
@@ -269,7 +271,7 @@ def category_breakdown():
         'data': data
     })
 
-@app.route('/api/monthly-trend')
+@bp.route('/api/monthly-trend')
 @login_required
 def monthly_trend():
     """API to get monthly trend data for charts."""
@@ -303,7 +305,7 @@ def monthly_trend():
         'data': months_data
     })
 
-@app.route('/api/financial-insights')
+@bp.route('/api/financial-insights')
 @login_required
 def financial_insights():
     """API to get financial insights."""

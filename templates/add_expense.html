@@ -12,7 +12,7 @@
                 </h2>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ url_for('add_expense') }}" onsubmit="return validateExpenseForm()">
+                <form method="POST" action="{{ url_for('main.add_expense') }}" onsubmit="return validateExpenseForm()">
                     <div class="mb-3">
                         <label for="amount" class="form-label">Amount ($)</label>
                         <div class="input-group">
@@ -45,7 +45,7 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save me-2"></i>Save Expense
                         </button>
-                        <a href="{{ url_for('expenses') }}" class="btn btn-outline-secondary">
+                        <a href="{{ url_for('main.expenses') }}" class="btn btn-outline-secondary">
                             <i class="fas fa-times me-2"></i>Cancel
                         </a>
                     </div>
