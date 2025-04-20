@@ -8,7 +8,7 @@ from models import User, Expense
 from forms import LoginForm, RegistrationForm, ExpenseForm
 
 # Create a blueprint for all routes
-bp = Blueprint('main', __name__)
+main_bp = Blueprint('main', __name__)
 
 # Add some categories
 categories = [
@@ -24,7 +24,7 @@ categories = [
     "Miscellaneous"
 ]
 
-@bp.route('/register', methods=['GET', 'POST'])
+@main_bp.route('/register', methods=['GET', 'POST'])
 def register():
     """Register a new user."""
     if current_user.is_authenticated:
@@ -43,7 +43,7 @@ def register():
     
     return render_template('register.html', form=form)
 
-@bp.route('/login', methods=['GET', 'POST'])
+@main_bp.route('/login', methods=['GET', 'POST'])
 def login():
     """Log in a user."""
     if current_user.is_authenticated:
@@ -64,27 +64,27 @@ def login():
     
     return render_template('login.html', form=form)
 
-@bp.route('/logout')
+@main_bp.route('/logout')
 def logout():
     """Log out a user."""
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('main.welcome'))
 
-@bp.route('/')
+@main_bp.route('/')
 def welcome():
     """Show welcome page for non-authenticated users or dashboard for authenticated users."""
     if current_user.is_authenticated:
         return redirect(url_for('main.dashboard'))
     return render_template('welcome.html')
 
-@bp.route('/dashboard')
+@main_bp.route('/dashboard')
 @login_required
 def dashboard():
     """Render the dashboard with expense summary and charts."""
     return render_template('dashboard.html', categories=categories)
 
-@bp.route('/expenses')
+@main_bp.route('/expenses')
 @login_required
 def expenses():
     """Show all expenses with filtering and sorting."""
@@ -133,7 +133,7 @@ def expenses():
         sort_order=sort_order
     )
 
-@bp.route('/expense/add', methods=['GET', 'POST'])
+@main_bp.route('/expense/add', methods=['GET', 'POST'])
 @login_required
 def add_expense():
     """Add a new expense."""
@@ -157,7 +157,7 @@ def add_expense():
     
     return render_template('add_expense.html', form=form, categories=categories)
 
-@bp.route('/expense/edit/<expense_id>', methods=['GET', 'POST'])
+@main_bp.route('/expense/edit/<expense_id>', methods=['GET', 'POST'])
 @login_required
 def edit_expense(expense_id):
     """Edit an existing expense."""
@@ -184,7 +184,7 @@ def edit_expense(expense_id):
     
     return render_template('edit_expense.html', form=form, expense=expense, categories=categories)
 
-@bp.route('/expense/delete/<expense_id>', methods=['POST'])
+@main_bp.route('/expense/delete/<expense_id>', methods=['POST'])
 @login_required
 def delete_expense(expense_id):
     """Delete an expense."""
@@ -196,7 +196,7 @@ def delete_expense(expense_id):
     flash('Expense deleted successfully!', 'success')
     return redirect(url_for('main.expenses'))
 
-@bp.route('/api/expense-stats')
+@main_bp.route('/api/expense-stats')
 @login_required
 def expense_stats():
     """API to get expense statistics for charts."""
@@ -234,7 +234,7 @@ def expense_stats():
         'count': len(expenses)
     })
 
-@bp.route('/api/category-breakdown')
+@main_bp.route('/api/category-breakdown')
 @login_required
 def category_breakdown():
     """API to get category breakdown for charts."""
@@ -271,7 +271,7 @@ def category_breakdown():
         'data': data
     })
 
-@bp.route('/api/monthly-trend')
+@main_bp.route('/api/monthly-trend')
 @login_required
 def monthly_trend():
     """API to get monthly trend data for charts."""
@@ -305,7 +305,7 @@ def monthly_trend():
         'data': months_data
     })
 
-@bp.route('/api/financial-insights')
+@main_bp.route('/api/financial-insights')
 @login_required
 def financial_insights():
     """API to get financial insights."""

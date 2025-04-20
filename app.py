@@ -1,57 +1,66 @@
 """Flask application factory module."""
 import os
-import logging
 
 from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
+
+from extensions import db, login_manager
+
 
 def create_app(test_config=None):
     """Create and configure the Flask application."""
-    # Configure logging
-    logging.basicConfig(level=logging.DEBUG)
-    
-    # Create Flask app
+    # create the app
     app = Flask(__name__)
+    app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key")
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)  # needed for url_for to generate with https
+
+    # configure the database with SQLite fallback
+    database_url = os.environ.get("DATABASE_URL")
     
-    # Load configuration
-    if test_config is None:
-        # Load the instance config, if it exists, when not testing
-        app.config.from_mapping(
-            SECRET_KEY=os.environ.get("SESSION_SECRET", "dev-secret-key"),
-            # Use SQLite for local development as we're having PostgreSQL connectivity issues
-            SQLALCHEMY_DATABASE_URI="sqlite:///expense_tracker.db",
-            SQLALCHEMY_TRACK_MODIFICATIONS=False
-        )
+    # ensure the instance folder exists
+    try:
+        os.makedirs(app.instance_path)
+    except OSError:
+        pass
+    
+    # Set SQLite database with absolute path
+    sqlite_path = os.path.join(app.instance_path, 'expense_tracker.db')
+    app.config["SQLALCHEMY_DATABASE_URI"] = f'sqlite:///{sqlite_path}'
+    
+    # Only try to use PostgreSQL if DATABASE_URL is provided
+    if database_url:
+        try:
+            import psycopg2
+            # Test connection
+            psycopg2.connect(database_url)
+            # If we get here, the connection was successful
+            app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+            app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+                "pool_recycle": 300,
+                "pool_pre_ping": True,
+            }
+            print("Using PostgreSQL database")
+        except Exception as e:
+            print(f"Failed to connect to PostgreSQL, falling back to SQLite: {e}")
     else:
-        # Load the test config if passed in
-        app.config.from_mapping(test_config)
-    
-    # Initialize extensions
-    from extensions import db, login_manager
+        print("DATABASE_URL not provided, using SQLite database")
+
+    # initialize extensions
     db.init_app(app)
     login_manager.init_app(app)
-    
-    # Import models for creating tables
-    with app.app_context():
-        from models import User  # noqa: F401
-        from models import Expense  # noqa: F401
-        db.create_all()
-    
-    # Register blueprints
-    from routes import bp as main_bp
-    app.register_blueprint(main_bp)
-    
-    # Set up the user loader
-    from models import User
+
     @login_manager.user_loader
     def load_user(user_id):
         """Flask-Login user loader function."""
+        from models import User
         return User.query.get(int(user_id))
-    
+
+    # register blueprints
+    from routes import main_bp
+    app.register_blueprint(main_bp)
+
+    # ensure database tables exist
+    with app.app_context():
+        db.create_all()
+
     return app
-
-# Create the application instance
-app = create_app()
-
-# Run the application if executed directly
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
