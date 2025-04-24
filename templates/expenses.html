@@ -101,7 +101,7 @@
                         <td class="expense-date">{{ expense.date.strftime('%B %d, %Y') }}</td>
                         <td class="expense-description">{{ expense.description }}</td>
                         <td><span class="category-badge">{{ expense.category }}</span></td>
-                        <td class="expense-amount">${{ "%.2f"|format(expense.amount) }}</td>
+                        <td class="expense-amount">₹{{ "%.2f"|format(expense.amount) }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
                                 <a href="{{ url_for('main.edit_expense', expense_id=expense.id) }}" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Edit">

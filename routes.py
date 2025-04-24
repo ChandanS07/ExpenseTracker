@@ -357,8 +357,8 @@ def financial_insights():
         trend = "Not enough data"
     
     return jsonify({
-        'top_spending_category': f"{top_category[0]} (${top_category[1]:.2f})",
-        'biggest_expense': f"{biggest_expense.description} (${biggest_expense.amount:.2f})",
+        'top_spending_category': f"{top_category[0]} (₹{top_category[1]:.2f})",
+        'biggest_expense': f"{biggest_expense.description} (₹{biggest_expense.amount:.2f})",
         'average_transaction': round(average_transaction, 2),
         'spending_trend': trend
     })

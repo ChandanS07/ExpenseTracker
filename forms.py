@@ -33,7 +33,7 @@ class RegistrationForm(FlaskForm):
 
 class ExpenseForm(FlaskForm):
     """Form for adding/editing expenses."""
-    amount = FloatField('Amount ($)', validators=[DataRequired()])
+    amount = FloatField('Amount (₹)', validators=[DataRequired()])
     date = DateField('Date', validators=[DataRequired()], format='%Y-%m-%d')
     description = StringField('Description', validators=[DataRequired(), Length(max=255)])
     category = SelectField('Category', validators=[DataRequired()])
