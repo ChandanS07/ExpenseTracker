@@ -311,14 +311,14 @@ function loadExpenseStats() {
     fetch(`/api/expense-stats?period=${period}`)
         .then(response => response.json())
         .then(data => {
-            totalExpenseElem.textContent = `$${data.total.toFixed(2)}`;
-            avgExpenseElem.textContent = `$${data.average_per_day.toFixed(2)}`;
+            totalExpenseElem.textContent = `₹${data.total.toFixed(2)}`;
+            avgExpenseElem.textContent = `₹${data.average_per_day.toFixed(2)}`;
             expenseCountElem.textContent = data.count;
         })
         .catch(error => {
             console.error('Error loading expense stats:', error);
-            totalExpenseElem.textContent = '$0.00';
-            avgExpenseElem.textContent = '$0.00';
+            totalExpenseElem.textContent = '₹0.00';
+            avgExpenseElem.textContent = '₹0.00';
             expenseCountElem.textContent = '0';
         });
 }
